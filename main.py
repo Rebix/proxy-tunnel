@@ -4,6 +4,7 @@ import requests
 from redis import Redis
 
 from constants import Settings
+from models import RequestPayload
 
 app = FastAPI()
 
@@ -27,12 +28,7 @@ def get_random_proxy() -> str:
 
 
 @app.post('/proxy')
-def send_req(
-        method: str, url: str, headers: t.Optional[t.Dict], params: t.Optional[t.Dict],
-        json_data: t.Optional[t.Dict], data: t.Optional[t.Dict], timeout: t.Optional[int] = 5,
-) -> t.Dict:
-    if headers is None:
-        headers = {}
+def send_req(payload: RequestPayload) -> t.Dict:
     proxy = get_random_proxy()
 
     if not proxy:
@@ -40,13 +36,13 @@ def send_req(
 
     try:
         res = requests.request(
-            method,
-            url,
-            headers=headers,
-            params=params,
-            json=json_data,
-            data=data,
-            timeout=timeout,
+            payload.method,
+            payload.url,
+            headers=payload.headers,
+            params=payload.params,
+            json=payload.json_data,
+            data=payload.data,
+            timeout=payload.timeout,
             proxies={'http': f'http://{proxy}'},
         )
     except Exception as e:
