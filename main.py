@@ -7,11 +7,13 @@ from constants import Settings
 
 app = FastAPI()
 
+settings = Settings()
+
 proxy_redis = Redis(
-    host=Settings.proxy_redis_host,
-    port=Settings.proxy_redis_port,
-    db=Settings.proxy_redis_db,
-    decode_responses=Settings.proxy_redis_decode_responses,
+    host=settings.proxy_redis_host,
+    port=settings.proxy_redis_port,
+    db=settings.proxy_redis_db,
+    decode_responses=settings.proxy_redis_decode_responses,
 )
 
 
