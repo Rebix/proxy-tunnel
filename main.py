@@ -36,18 +36,18 @@ def send_req(
     if not proxy:
         return {'status': 'Failed', 'message': 'No proxy available.'}
 
-    res = requests.request(
-        method,
-        url,
-        headers=headers if headers else {},
-        params=params if params else {},
-        json=json_data if json_data else {},
-        data=data if data else {},
-        timeout=timeout,
-        proxies={'http': f'http://{proxy}'},
-    )
-
     try:
+        res = requests.request(
+            method,
+            url,
+            headers=headers if headers else {},
+            params=params if params else {},
+            json=json_data if json_data else {},
+            data=data if data else {},
+            timeout=timeout,
+            proxies={'http': f'http://{proxy}'},
+        )
+
         return res.json()
     except Exception as e:
-        return {'status': 'Failed', 'message': 'Response is not json.'}
+        return {'status': 'Failed', 'message': 'Request Failed.', 'reason': e}
