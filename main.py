@@ -33,6 +33,9 @@ def send_req(
 ) -> requests.Response:
     proxy = get_random_proxy()
 
+    if not proxy:
+        return {'status': 'Failed', 'message': 'No proxy available.'}
+
     res = requests.request(
         method,
         url,
@@ -44,4 +47,7 @@ def send_req(
         proxies={'http': f'http://{proxy}'},
     )
 
-    return res
+    try:
+        return res.json()
+    except Exception as e:
+        return {'status': 'Failed', 'message': 'Response is not json.'}
