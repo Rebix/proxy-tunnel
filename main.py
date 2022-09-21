@@ -30,7 +30,9 @@ def get_random_proxy() -> str:
 def send_req(
         method: str, url: str, headers: t.Optional[t.Dict], params: t.Optional[t.Dict],
         json_data: t.Optional[t.Dict], data: t.Optional[t.Dict], timeout: t.Optional[int] = 5,
-) -> requests.Response:
+) -> t.Dict:
+    if headers is None:
+        headers = {}
     proxy = get_random_proxy()
 
     if not proxy:
@@ -40,14 +42,17 @@ def send_req(
         res = requests.request(
             method,
             url,
-            headers=headers if headers else {},
-            params=params if params else {},
-            json=json_data if json_data else {},
-            data=data if data else {},
+            headers=headers,
+            params=params,
+            json=json_data,
+            data=data,
             timeout=timeout,
             proxies={'http': f'http://{proxy}'},
         )
-
-        return res.json()
     except Exception as e:
         return {'status': 'Failed', 'message': 'Request Failed.', 'reason': e}
+
+    try:
+        return res.json()
+    except Exception as e:
+        return {'status': 'Failed', 'message': 'Response decode failed.', 'reason': e}
